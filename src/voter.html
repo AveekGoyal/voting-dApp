@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="voter.css">
+    <title>Voter Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Voter Dashboard</h1>
+        <a href="index.html">Back to Home Page</a>
+    </header>
+
+    <main>
+        <section id="votingPoll">
+            <h2>Current Poll</h2>
+            <p id="pollQuestion"></p>
+            <label>
+                <input type="checkbox" id="option1Checkbox" disabled> <span id="option1Text"></span>
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" id="option2Checkbox" disabled> <span id="option2Text"></span>
+            </label>
+            <br>
+            <button id="voteButton" disabled>Vote</button>
+            <p id="votingStatus"></p>
+        </section>
+
+    </main>
+
+
+    <script src="voter.js"></script>
+</body>
+</html>
