@@ -1,7 +1,5 @@
-// Define the Ethereum network
 const web3 = new Web3(ethereum);
 
-// Define the contract ABI and contract address
 const contractABI = [
 	{
 		"inputs": [],
@@ -321,26 +319,21 @@ initLatestOwnerPoll();
 document.getElementById('createPollButton').addEventListener('click', async () => {
     event.preventDefault()
     try {
-        // Get poll details from the input fields
         const question = document.getElementById('pollQuestion').value;
         const option1 = document.getElementById('option1').value;
         const option2 = document.getElementById('option2').value;
         const startTime = new Date(document.getElementById('startTime').value).getTime() / 1000;
         const endTime = new Date(document.getElementById('endTime').value).getTime() / 1000;
-
-        // Check if the question and options are not empty
         if (!question || !option1 || !option2) {
             alert('Please fill in all the required fields.');
             return;
         }
 
-        // Check if the end time is after the start time
         if (endTime <= startTime) {
             alert('End time must be after start time.');
             return;
         }
 
-        // Create the poll by sending a transaction
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         const senderAddress = accounts[0];
 
@@ -355,11 +348,9 @@ document.getElementById('createPollButton').addEventListener('click', async () =
     }
 });
     async function initLatestOwnerPoll() {
-        // Get the latest poll ID by calling a separate function in your contract
         const latestPollID = await contract.methods.pollCounter().call()-1;
 
         if (latestPollID > 0) {
-            // Assuming you want to display the details of the latest poll
             const poll = await contract.methods.getPoll(latestPollID).call();
 
         const pollQuestionDisplay = document.getElementById("pollQuestionDisplay");
@@ -378,7 +369,6 @@ document.getElementById('createPollButton').addEventListener('click', async () =
         option1VotesDisplay.textContent = poll[5];
         option2VotesDisplay.textContent = poll[6];
         } else {
-            // No polls exist, display a message or perform other actions
             pollSection.innerHTML = "No polls exist.";
         }
     }
