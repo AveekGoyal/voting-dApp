@@ -1,7 +1,5 @@
-// Define the Ethereum network
 const web3 = new Web3(ethereum);
 
-// Define the contract ABI and contract address
 const contractABI = [
 	{
 		"inputs": [],
@@ -317,27 +315,20 @@ const contractABI = [
 ];
 const contractAddress = '0xc29d099E10985b74100C83800a75e16A8E4D1cD8';
 
-// Create a contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 document.getElementById('registerVoterButton').addEventListener('click', async () => {
     try {
-        // Get the MetaMask address from the input field
         const voterAddress = document.getElementById('voterMetaMaskAddress').value;
-
-        // Check if the address is valid
         if (!web3.utils.isAddress(voterAddress)) {
             alert('Invalid MetaMask address. Please enter a valid address.');
             return;
-        }
-
-        // Check if the voter is already registered
+	}
         const isRegistered = await contract.methods.voters(voterAddress).call();
         if (isRegistered) {
             alert('You are already registered as a voter.');
             return;
         }
 
-        // Register the voter by sending a transaction
         const accounts = await ethereum.enable();
         const senderAddress = accounts[0];
 
@@ -351,9 +342,9 @@ document.getElementById('registerVoterButton').addEventListener('click', async (
     }
 });
 
-// Handle navigation to the Owner Dashboard
+
 document.getElementById('ownerDashboardButton').addEventListener('click', () => {
-    const ownerAddress = '0x868d8C1587BF72295b41E76Cfb180e38E3bd08cC'; // Replace with the owner's MetaMask address
+    const ownerAddress = '0x868d8C1587BF72295b41E76Cfb180e38E3bd08cC';
     const enteredOwnerAddress = document.getElementById('ownerMetaMaskAddress').value;
 
     if (enteredOwnerAddress !== ownerAddress) {
@@ -361,36 +352,29 @@ document.getElementById('ownerDashboardButton').addEventListener('click', () => 
         return;
     }
 
-    // Navigate to the owner dashboard page with the owner address
     window.location.href = `owner-dashboard.html?address=${ownerAddress}`;
 });
 
-// Handle navigation to the Voter Dashboard
 document.getElementById('voterDashboardButton').addEventListener('click', async () => {
     const enteredVoterAddress = document.getElementById('voterMetaMaskAddress2').value;
-    // Check if the address is valid
     if (!web3.utils.isAddress(enteredVoterAddress)) {
         alert('Invalid MetaMask address. Please enter a valid address.');
         return;
     }
 
-    // Check if the voter is already registered
     const isRegistered = await contract.methods.voters(enteredVoterAddress).call();
     if (!isRegistered) {
         alert('You are not registered as a voter. Please register first.');
         return;
     }
 
-    // Navigate to the voter dashboard page with the voter address
     window.location.href = `voter.html?address=${enteredVoterAddress}`;
 });
 
 
 async function displayLatestPoll() {
-    // Get the latest poll ID by calling a separate function in your contract
     const latestPollID = await contract.methods.pollCounter().call() - 1;
 
-    // Fetch HTML elements for displaying poll information
     const pollQuestionDisplay = document.getElementById("pollQuestionDisplay");
     const option1Display = document.getElementById("option1Display");
     const option2Display = document.getElementById("option2Display");
@@ -400,17 +384,14 @@ async function displayLatestPoll() {
     const option2VotesDisplay = document.getElementById("option2VotesDisplay");
 
     if (latestPollID > 0) {
-        // Assuming you want to display the details of the latest poll
         const poll = await contract.methods.getPoll(latestPollID).call();
-        const currentTime = Math.floor(Date.now() / 1000); // Get current time in seconds
-
+        const currentTime = Math.floor(Date.now() / 1000);
         pollQuestionDisplay.textContent = `Poll Question: ${poll[0]}`;
         option1Display.textContent = `Option 1: ${poll[1]}`;
         option2Display.textContent = `Option 2: ${poll[2]}`;
         startTimeDisplay.textContent = `Start Time: ${new Date(poll[3] * 1000).toLocaleString()}`;
         endTimeDisplay.textContent = `End Time: ${new Date(poll[4] * 1000).toLocaleString()}`;
 
-        // Check if the current time is within the voting period
         if (currentTime >= poll[3] && currentTime <= poll[4]) {
             option1VotesDisplay.textContent = "Voting is still open.";
             option2VotesDisplay.textContent = "Voting is still open.";
@@ -420,7 +401,6 @@ async function displayLatestPoll() {
             document.getElementById("pollTitle").textContent = "Result of the Poll";
         }
     } else {
-        // No polls exist, display a message
         pollQuestionDisplay.textContent = "No poll exists.";
         option1Display.textContent = "";
         option2Display.textContent = "";
@@ -431,5 +411,4 @@ async function displayLatestPoll() {
     }
 }
 
-// Call the function to display the latest poll information
 displayLatestPoll();
