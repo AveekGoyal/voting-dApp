@@ -70,16 +70,15 @@ button:hover {
     margin-top: 20px;
 }
 
-/* Align buttons horizontally */
 button {
     display: block;
     margin: 10px auto;
 }
 
 #voterRegistration {
-    grid-column: span 2; /* Make this section span both columns */
+    grid-column: span 2;
 }
 
 #poll {
-    margin-top: 20px; /* Add margin to create a gap between sections */
+    margin-top: 20px;
 }
