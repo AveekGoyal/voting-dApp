@@ -1,7 +1,6 @@
-// Define the Ethereum network
+
 const web3 = new Web3(ethereum);
 
-// Define the contract ABI and contract address
 const contractABI = [
 	{
 		"inputs": [],
@@ -321,12 +320,9 @@ let contract;
 async function initContract() {
 
     try {
-        // Request access to Ethereum accounts
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         web3.eth.defaultAccount = accounts[0];
         contract = new web3.eth.Contract(contractABI, contractAddress);
-
-        // Call the function to display the latest poll
         await initLatestVoterPoll();
     } catch (error) {
         console.error('Error initializing contract:', error);
@@ -335,15 +331,12 @@ async function initContract() {
 
 async function initLatestVoterPoll() {
     try {
-        // Get the latest poll ID by calling a separate function in your contract
         const latestPollID = await contract.methods.pollCounter().call() - 1;
 
         if (latestPollID > 0) {
-            // Assuming you want to display the details of the latest poll
             const poll = await contract.methods.getPoll(latestPollID).call();
-            const currentTime = Math.floor(Date.now() / 1000); // Get current time in seconds
+            const currentTime = Math.floor(Date.now() / 1000);
 
-            // Fetch HTML elements
             const pollQuestion = document.getElementById("pollQuestion");
             const option1Checkbox = document.getElementById("option1Checkbox");
             const option2Checkbox = document.getElementById("option2Checkbox");
@@ -352,20 +345,18 @@ async function initLatestVoterPoll() {
 
             const option1Data = document.getElementById("option1Text");
             const option2Data = document.getElementById("option2Text");
-            // Update the displayed poll information
+
             pollQuestion.textContent = poll[0];
             option1Data.textContent = poll[1];
             option2Data.textContent = poll[2];
 
-            // Check if the current time is within the voting period
             if (currentTime >= poll[3] && currentTime <= poll[4]) {
-                // Enable voting options
+
                 option1Checkbox.disabled = false;
                 option2Checkbox.disabled = false;
                 voteButton.disabled = false;
                 votingStatus.textContent = "Voting is open.";
                 console.log("1-----")
-                // Check if the voter has already voted for this poll
                 const hasVoted = await contract.methods.hasVoted(latestPollID, web3.eth.defaultAccount).call();
                 if (hasVoted) {
                     console.log("2-----")
@@ -375,7 +366,7 @@ async function initLatestVoterPoll() {
                     votingStatus.textContent = "You have already voted in this poll.";
                 }
             } else {
-                // Voting period has ended
+          
                 console.log("3-----")
                 votingStatus.textContent = "Voting is closed.";
                 option1Checkbox.disabled = true;
@@ -383,7 +374,7 @@ async function initLatestVoterPoll() {
                 voteButton.disabled = true;
             }
         } else {
-            // No polls exist, display a message or perform other actions
+          
             pollQuestion.textContent = "No polls exist.";
         }
     } catch (error) {
@@ -391,7 +382,7 @@ async function initLatestVoterPoll() {
     }
 }
 
-// Function to cast a vote
+
 async function vote() {
     console.log("hasVoted")
     const latestPollID = await contract.methods.pollCounter().call() - 1;
@@ -403,10 +394,9 @@ async function vote() {
         const selectedOption = option1Checkbox.checked ? true : false;
         console.log(selectedOption)
         try {
-            // Call the vote function in the smart contract
+
             await contract.methods.vote(latestPollID, selectedOption).send({ from: web3.eth.defaultAccount });
 
-            // Update the UI to reflect the vote
             option1Checkbox.disabled = true;
             option2Checkbox.disabled = true;
             votingStatus.textContent = "You have voted in this poll.";
@@ -414,17 +404,14 @@ async function vote() {
             console.error('Error casting vote:', error);
         }
     } else {
-        // Alert the user that they have already voted
         alert("You have already voted in this poll.");
     }
 }
 
 async function initLatestOwnerPoll() {
-    // Get the latest poll ID by calling a separate function in your contract
     const latestPollID = await contract.methods.pollCounter().call()-1;
 
     if (latestPollID > 0) {
-        // Assuming you want to display the details of the latest poll
         const poll = await contract.methods.getPoll(latestPollID).call();
 
     const pollQuestionDisplay = document.getElementById("pollQuestionDisplay");
@@ -443,18 +430,14 @@ async function initLatestOwnerPoll() {
     option1VotesDisplay.textContent = poll[5];
     option2VotesDisplay.textContent = poll[6];
     } else {
-        // No polls exist, display a message or perform other actions
         pollSection.innerHTML = "No polls exist.";
     }
 }
 
-// Initialize the contract and the latest poll
 initContract();
 
 const voteButton = document.getElementById("voteButton");
 
-// Add a click event listener to the "Vote" button
 voteButton.addEventListener("click", async function () {
-    // Call the vote function when the button is clicked
     await vote();
 });
